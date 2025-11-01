@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${restaurant.name} + ' - Menu'">Restaurant Menu</title>
+    <link rel="icon" type="image/png" href="/image/logo.png">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- ✅ WRAP full page except modal -->
+<div class="page-content">
+
+    <!-- Header -->
+    <header>
+        <div class="logo">ADS</div>
+        <nav class="nav">
+            <a th:href="@{/home}">Home</a>
+            <a th:href="@{/orders}">My Orders</a>
+            <a th:href="@{/profile}">Profile</a>
+            <a href="#" onclick="toggleCart()">
+                Cart <span class="cart-count" id="cartCount">0</span>
+            </a>
+            <a th:href="@{/logout}">Logout</a>
+        </nav>
+    </header>
+
+    <!-- Your normal restaurant UI / cards below -->
+    <!-- ✅ DO NOT remove page content — this blur background -->
+
+</div> <!-- end page-content -->
+
+<!-- ✅ Modal Blur Overlay -->
+<div class="menu-overlay"></div>
+
+<!-- ✅ Menu Modal Box -->
+<div class="menu-popup">
+
+    <div class="menu-header">
+        <h2 th:text="${restaurant.name}"></h2>
+        <button class="close-btn" onclick="closeMenuModal()">✕</button>
+    </div>
+
+    <div class="menu-content">
+        <div th:each="item : ${menuItems}" class="menu-row">
+
+            <div class="left-info">
+                <div class="food-name" th:text="${item.name}"></div>
+                <div class="food-desc" th:text="${item.description}"></div>
+                <div class="food-price" th:text="'₹' + ${item.price}"></div>
+            </div>
+
+            <div class="qty-box">
+                <button onclick="decreaseQuantity(this)" th:data-item-id="${item.id}">−</button>
+                <span class="qty-display">0</span>
+                <button onclick="increaseQuantity(this)"
+                        th:data-item-id="${item.id}"
+                        th:data-item-name="${item.name}"
+                        th:data-item-price="${item.price}"
+                        th:data-restaurant-id="${restaurant.id}"
+                        th:data-restaurant-name="${restaurant.name}">
+                    +
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ✅ Cart Sidebar remains same -->
+<div id="cartSidebar" class="cart-sidebar">
+    <div class="cart-header">
+        <span>Your Cart</span>
+        <button class="close-btn" onclick="toggleCart()">×</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+        <div class="empty-cart">Your cart is empty</div>
+    </div>
+    <div class="cart-footer">
+        <div class="cart-total">
+            <span>Total:</span>
+            <span id="cartTotal">₹0</span>
+        </div>
+        <a th:href="@{/orders/checkout}" class="btn btn-primary" style="width:100%;display:block;text-align:center;">
+            Proceed to Checkout
+        </a>
+    </div>
+</div>
+
+<div id="overlay" class="modal hidden" onclick="toggleCart()"></div>
+
+<script th:src="@{/js/menu.js}"></script>
+
+<script>
+    /* ✅ Blur & open modal */
+    function openMenuModal() {
+        document.querySelector(".menu-popup").style.display = "block";
+        document.querySelector(".menu-overlay").style.display = "block";
+        document.querySelector(".page-content").classList.add("page-blur");
+    }
+
+    /* ✅ Close modal + remove blur */
+    function closeMenuModal() {
+        document.querySelector(".menu-popup").style.display = "none";
+        document.querySelector(".menu-overlay").style.display = "none";
+        document.querySelector(".page-content").classList.remove("page-blur");
+    }
+
+    /* Auto-open modal when page loads for this restaurant */
+    window.onload = openMenuModal;
+</script>
+
+</body>
+</html>

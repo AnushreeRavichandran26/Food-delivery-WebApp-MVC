@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - ADS Food Delivery</title>
+    <link rel="icon" type="image/png" href="/image/logo.png">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<!-- Header -->
+<header>
+    <div class="logo">ADS</div>
+    <div class="nav">
+        <a th:href="@{/home}">Home</a>
+        <a th:href="@{/orders}">My Orders</a>
+        <a th:href="@{/profile}">Profile</a>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+</header>
+
+<!-- Checkout Form -->
+<div class="checkout-container">
+    <div class="checkout-form">
+        <h2 class="checkout-title">Complete Your Order</h2>
+
+        <!-- Error/Success Messages -->
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <form th:action="@{/orders/place}" method="post" id="checkoutForm">
+            <!-- Payment Method -->
+            <div class="checkout-section">
+                <h3>Payment Method</h3>
+                <div class="payment-method">
+                    <div class="payment-option" onclick="selectPayment('card', this)">
+                        <input type="radio" name="paymentMethod" value="card" required hidden>
+                        Credit/Debit Card
+                    </div>
+                    <div class="payment-option" onclick="selectPayment('upi', this)">
+                        <input type="radio" name="paymentMethod" value="upi" required hidden>
+                        UPI Payment
+                    </div>
+                    <div class="payment-option" onclick="selectPayment('cod', this)">
+                        <input type="radio" name="paymentMethod" value="cod" required hidden>
+                        Cash on Delivery
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Details (Hidden by default) -->
+            <div id="cardDetails" class="hidden">
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <input type="text" name="cardNumber" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX" maxlength="19">
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Expiry Date</label>
+                        <input type="text" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>CVV</label>
+                        <input type="password" placeholder="***" maxlength="3">
+                    </div>
+                </div>
+            </div>
+
+            <!-- UPI Details (Hidden by default) -->
+            <div id="upiDetails" class="hidden">
+                <div class="form-group">
+                    <label>UPI ID</label>
+                    <input type="text" name="upiId" id="upiId" placeholder="example@upi">
+                </div>
+            </div>
+
+            <!-- Delivery Address -->
+            <div class="checkout-section">
+                <h3>Delivery Address</h3>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="deliveryName" th:value="${currentUser.name}" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" name="deliveryPhone" th:value="${currentUser.phone}" required>
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea name="deliveryAddress" placeholder="Enter delivery address"
+                              th:text="${currentUser.address}" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" name="deliveryCity" th:value="${currentUser.city}" required>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary-box">
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span th:text="'₹' + ${subtotal}">₹0</span>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery Fee:</span>
+                    <span th:text="'₹' + ${deliveryFee}">₹50</span>
+                </div>
+                <div class="summary-row">
+                    <span>Tax (5%):</span>
+                    <span th:text="'₹' + ${tax}">₹0</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total Amount:</span>
+                    <span th:text="'₹' + ${total}">₹0</span>
+                </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <button type="submit" class="btn btn-primary" style="width:100%; padding:15px;">
+                Complete Payment
+            </button>
+            <a th:href="@{/home}" class="btn" style="width:100%; padding:15px; background-color:#ddd; color:#333; margin-top:10px; display:block; text-align:center; text-decoration:none;">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+
+<script th:src="@{/js/checkout.js}"></script>
+</body>
+</html>

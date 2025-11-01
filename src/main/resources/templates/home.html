@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - ADS Food Delivery</title>
+    <link rel="icon" type="image/png" href="/image/logo.png">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<!-- Header -->
+<header>
+    <div class="logo">ADS</div>
+    <div class="nav">
+        <a th:href="@{/home}" class="active">Home</a>
+        <a th:href="@{/orders}">My Orders</a>
+        <a th:href="@{/profile}">Profile</a>
+        <a href="#" onclick="toggleCart()">
+            Cart <span class="cart-count" id="cartCount">0</span>
+        </a>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="home">
+    <div class="section-title">Popular Restaurants</div>
+
+    <div class="restaurant-grid">
+
+        <div th:each="restaurant : ${restaurants}"
+             class="restaurant-card"
+             th:onclick="|openMenu(${restaurant.id})|">
+
+            <img th:src="${restaurant.imageUrl != null ? restaurant.imageUrl : 'https://via.placeholder.com/300x200'}"
+                 class="restaurant-image"
+                 th:alt="${restaurant.name}">
+            <div class="restaurant-info">
+                <div class="restaurant-name" th:text="${restaurant.name}">Restaurant</div>
+                <div class="restaurant-cuisine" th:text="${restaurant.cuisine}">Cuisine</div>
+                <div class="restaurant-rating" th:text="'Rating: ' + ${restaurant.rating}">Rating</div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(restaurants)}" class="loading">
+        No restaurants available at the moment.
+    </div>
+
+</div>
+
+<!-- ✅ Menu Modal Overlay -->
+<div id="menuModalOverlay" class="menu-modal-overlay"></div>
+
+<!-- ✅ Menu Modal -->
+<div id="menuModal" class="menu-modal">
+    <div class="modal-title-bar">
+        <h2 id="menuRestaurantName">Restaurant</h2>
+        <button class="menu-close" onclick="closeMenu()">×</button>
+    </div>
+    <div class="modal-items" id="menuItemsList" style="max-height:65vh; overflow-y:auto;">
+        <div class="loading">Loading menu...</div>
+    </div>
+</div>
+
+<!-- Cart Sidebar -->
+<div id="cartSidebar" class="cart-sidebar">
+    <div class="cart-header">
+        <span>Your Cart</span>
+        <button class="close-btn" onclick="toggleCart()">×</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+        <div class="empty-cart">Your cart is empty</div>
+    </div>
+    <div class="cart-footer">
+        <div class="cart-total">
+            <span>Total:</span>
+            <span id="cartTotal">₹0</span>
+        </div>
+        <a th:href="@{/orders/checkout}" class="btn btn-primary" style="width:100%;text-align:center;display:block;text-decoration:none;">
+            Proceed to Checkout
+        </a>
+    </div>
+</div>
+
+<div id="overlay" class="modal hidden" onclick="toggleCart()"></div>
+
+<script th:src="@{/js/cart.js}"></script>
+
+<script>
+    // ✅ Complete Menu Popup Script with Cart Integration
+    let menuQuantities = {};
+    let currentRestaurant = {
+        id: null,
+        name: null
+    };
+    let menuItems = {}; // Store menu item details
+
+    function openMenu(id) {
+        // ✅ Fetch restaurant details
+        fetch(`/restaurants/${id}`)
+            .then(r => {
+                if (!r.ok) throw new Error('Failed to fetch restaurant');
+                return r.json();
+            })
+            .then(res => {
+                currentRestaurant.id = res.id;
+                currentRestaurant.name = res.name;
+                document.getElementById("menuRestaurantName").textContent = res.name;
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                document.getElementById("menuRestaurantName").textContent = "Error loading restaurant";
+            });
+
+        // ✅ Fetch menu items
+        fetch(`/restaurants/${id}/menu`)
+            .then(r => {
+                if (!r.ok) throw new Error('Failed to fetch menu');
+                return r.json();
+            })
+            .then(items => {
+                let html = "";
+                menuQuantities = {};
+                menuItems = {}; // Reset menu items
+
+                if (!items || items.length === 0) {
+                    html = '<div class="loading">No menu items available</div>';
+                } else {
+                    items.forEach(item => {
+                        // Store item details for later use
+                        menuItems[item.id] = {
+                            id: item.id,
+                            name: item.name,
+                            price: item.price
+                        };
+
+                        const description = item.description || "";
+                        html += `
+                <div class="modal-item">
+                    <div style="flex:1">
+                        <div class="modal-item-name">${escapeHtml(item.name)}</div>
+                        <div class="modal-item-desc">${escapeHtml(description)}</div>
+                        <div class="modal-item-price">₹${item.price}</div>
+                    </div>
+                    <div class="qty-box">
+                        <button onclick="decQty(${item.id})">-</button>
+                        <span id="qty-${item.id}" class="qty-display">0</span>
+                        <button onclick="incQty(${item.id})">+</button>
+                    </div>
+                </div>`;
+                    });
+                }
+
+                document.getElementById("menuItemsList").innerHTML = html;
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                document.getElementById("menuItemsList").innerHTML =
+                    '<div class="loading">Error loading menu items</div>';
+            });
+
+        // ✅ Show modal and overlay
+        document.getElementById("menuModal").classList.add("show");
+        document.getElementById("menuModalOverlay").classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeMenu() {
+        document.getElementById("menuModal").classList.remove("show");
+        document.getElementById("menuModalOverlay").classList.remove("show");
+        document.body.style.overflow = "";
+    }
+
+    function incQty(id) {
+        menuQuantities[id] = (menuQuantities[id] || 0) + 1;
+        document.getElementById("qty-" + id).textContent = menuQuantities[id];
+
+        // ✅ Add item to cart via API
+        const item = menuItems[id];
+        if (item && currentRestaurant.id) {
+            addToCart(item.id, item.name, item.price, currentRestaurant.id, currentRestaurant.name);
+        }
+    }
+
+    function decQty(id) {
+        if (!menuQuantities[id] || menuQuantities[id] === 0) return;
+        menuQuantities[id]--;
+        document.getElementById("qty-" + id).textContent = menuQuantities[id];
+
+        // Note: Your current CartController doesn't have a decrement endpoint
+        // You might need to implement removeFromCart functionality
+    }
+
+    // ✅ Add item to cart using your CartController API
+    function addToCart(itemId, itemName, price, restaurantId, restaurantName) {
+        const formData = new URLSearchParams();
+        formData.append('itemId', itemId);
+        formData.append('itemName', itemName);
+        formData.append('price', price);
+        formData.append('restaurantId', restaurantId);
+        formData.append('restaurantName', restaurantName);
+
+        fetch('/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update cart count
+                    document.getElementById('cartCount').textContent = data.cartCount;
+                    console.log('Item added to cart:', data.message);
+
+                    // Refresh cart display if loadCart function exists
+                    if (typeof loadCart === 'function') {
+                        loadCart();
+                    }
+                } else {
+                    console.error('Failed to add item:', data.message);
+                    alert('Failed to add item to cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding to cart:', error);
+                alert('Error adding item to cart');
+            });
+    }
+
+    // Helper function to escape HTML and prevent XSS
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // ✅ Load cart on page load
+    window.addEventListener('DOMContentLoaded', function() {
+        if (typeof loadCart === 'function') {
+            loadCart();
+        }
+    });
+</script>
+
+</body>
+</html>

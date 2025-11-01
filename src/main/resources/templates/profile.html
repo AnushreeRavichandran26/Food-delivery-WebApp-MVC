@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - ADS Food Delivery</title>
+    <link rel="icon" type="image/png" href="/image/logo.png">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<!-- Header -->
+<header>
+    <div class="logo">ADS</div>
+    <div class="nav">
+        <a th:href="@{/home}">Home</a>
+        <a th:href="@{/orders}">My Orders</a>
+        <a th:href="@{/profile}" class="active">Profile</a>
+        <a href="#" onclick="toggleCart()">
+            Cart <span class="cart-count" id="cartCount">0</span>
+        </a>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+</header>
+
+<!-- Profile Container -->
+<div class="profile-container">
+    <div class="profile-card">
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar"
+                 th:text="${user != null ? #strings.substring(user.name, 0, 1).toUpperCase() : 'U'}">U</div>
+            <div class="profile-name" th:text="${user != null ? user.name : 'User Name'}">User Name</div>
+            <div class="profile-email" th:text="${user != null ? user.email : 'user@example.com'}">user@example.com</div>
+        </div>
+
+        <!-- Edit Mode Form -->
+        <form th:action="@{/profile/update}" method="post" id="profileForm">
+            <!-- Personal Information -->
+            <div class="profile-section">
+                <h3>Personal Information</h3>
+
+                <div class="profile-field">
+                    <label>Name:</label>
+                    <span class="display-value" th:text="${user != null ? user.name : '-'}">-</span>
+                    <input type="text" name="name" th:value="${user != null ? user.name : ''}" class="edit-input hidden" required>
+                </div>
+
+                <div class="profile-field">
+                    <label>Email:</label>
+                    <span class="display-value" th:text="${user != null ? user.email : '-'}">-</span>
+                    <input type="email" name="email" th:value="${user != null ? user.email : ''}" class="edit-input hidden" required>
+                </div>
+
+                <div class="profile-field">
+                    <label>Phone:</label>
+                    <span class="display-value" th:text="${user != null ? user.phone : '-'}">-</span>
+                    <input type="tel" name="phone" th:value="${user != null ? user.phone : ''}" class="edit-input hidden" required>
+                </div>
+
+                <div class="profile-field">
+                    <label>Address:</label>
+                    <span class="display-value" th:text="${user != null ? user.address : '-'}">-</span>
+                    <input type="text" name="address" th:value="${user != null ? user.address : ''}" class="edit-input hidden" required>
+                </div>
+
+                <div class="profile-field">
+                    <label>City:</label>
+                    <span class="display-value" th:text="${user != null and user.city != null ? user.city : 'Not specified'}">-</span>
+                    <input type="text" name="city" th:value="${user != null ? user.city : ''}" class="edit-input hidden">
+                </div>
+            </div>
+
+            <!-- Account Statistics -->
+            <div class="profile-section">
+                <h3>Account Statistics</h3>
+                <div class="profile-field">
+                    <label>Total Orders:</label>
+                    <span th:text="${orderCount != null ? orderCount : '0'}">0</span>
+                </div>
+                <div class="profile-field">
+                    <label>Member Since:</label>
+                    <span th:text="${user != null and user.createdAt != null ? #temporals.format(user.createdAt, 'dd MMMM yyyy') : 'Recently'}">-</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="profile-actions">
+                <button type="button" class="btn btn-primary" id="editBtn" onclick="enableEdit()">
+                    Edit Profile
+                </button>
+                <button type="submit" class="btn btn-secondary hidden" id="saveBtn">
+                    Save Changes
+                </button>
+                <button type="button" class="btn hidden" id="cancelBtn"
+                        style="background-color: #ddd; color: #333;"
+                        onclick="cancelEdit()">
+                    Cancel
+                </button>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function enableEdit() {
+        document.querySelectorAll('.display-value').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.edit-input').forEach(el => el.classList.remove('hidden'));
+        document.getElementById('editBtn').classList.add('hidden');
+        document.getElementById('saveBtn').classList.remove('hidden');
+        document.getElementById('cancelBtn').classList.remove('hidden');
+    }
+
+    function cancelEdit() {
+        document.querySelectorAll('.display-value').forEach(el => el.classList.remove('hidden'));
+        document.querySelectorAll('.edit-input').forEach(el => el.classList.add('hidden'));
+        document.getElementById('editBtn').classList.remove('hidden');
+        document.getElementById('saveBtn').classList.add('hidden');
+        document.getElementById('cancelBtn').classList.add('hidden');
+        document.getElementById('profileForm').reset();
+    }
+</script>
+</body>
+</html>

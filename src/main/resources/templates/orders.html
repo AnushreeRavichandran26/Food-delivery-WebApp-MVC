@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - ADS Food Delivery</title>
+    <link rel="icon" type="image/png" href="/image/logo.png">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<!-- Header -->
+<header>
+    <div class="logo">ADS</div>
+    <div class="nav">
+        <a th:href="@{/home}">Home</a>
+        <a th:href="@{/orders}" class="active">My Orders</a>
+        <a th:href="@{/profile}">Profile</a>
+        <a href="#" onclick="toggleCart()">
+            Cart <span class="cart-count" id="cartCount">0</span>
+        </a>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+</header>
+
+<!-- Orders Container -->
+<div class="orders-container">
+    <h2 style="margin-bottom: 30px;">Your Orders</h2>
+
+    <!-- Success/Error Messages -->
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <!-- Orders List -->
+    <div th:if="${!#lists.isEmpty(orders)}">
+        <div th:each="order : ${orders}" class="order-card">
+            <!-- Order Header -->
+            <div class="order-header">
+                <div>
+                    <div class="order-id" th:text="'Order #' + ${order.id}">Order #1</div>
+                    <div style="font-size: 12px; color: #999;"
+                         th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy, hh:mm a')}">
+                        Date & Time
+                    </div>
+                </div>
+                <div class="order-status"
+                     th:classappend="'status-' + ${#strings.toLowerCase(order.status)}"
+                     th:text="${#strings.toUpperCase(order.status)}">
+                    STATUS
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="order-details">
+                <h4 style="margin-bottom: 10px;">Items Ordered:</h4>
+                <div th:if="${!#lists.isEmpty(order.items)}">
+                    <div th:each="item : ${order.items}" class="order-item">
+                        <span th:text="${item.name}">Item Name</span>
+                        <span th:text="'₹' + ${item.price}">₹0</span>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(order.items)}">
+                    <p style="color: #999;">No items found</p>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <div class="order-item">
+                    <span>Subtotal</span>
+                    <span th:text="'₹' + ${order.totalAmount - order.tax - order.deliveryFee}">₹0</span>
+                </div>
+                <div class="order-item">
+                    <span>Tax (5%)</span>
+                    <span th:text="'₹' + ${order.tax}">₹0</span>
+                </div>
+                <div class="order-item">
+                    <span>Delivery Fee</span>
+                    <span th:text="'₹' + ${order.deliveryFee}">₹0</span>
+                </div>
+                <div class="order-total">
+                    <span>Total</span>
+                    <span th:text="'₹' + ${order.totalAmount}">₹0</span>
+                </div>
+            </div>
+
+            <!-- Delivery Info -->
+            <div class="delivery-info">
+                <div class="delivery-address">
+                    <label>📍 Delivery Address:</label>
+                    <div th:text="${order.deliveryAddress}">Address</div>
+                </div>
+
+                <div th:if="${order.estimatedDeliveryTime}" class="delivery-time">
+                    <label>⏱️ Estimated Delivery:</label>
+                    <div th:text="${#temporals.format(order.estimatedDeliveryTime, 'hh:mm a')}">Time</div>
+                </div>
+
+                <div th:if="${order.deliveryAgent}" class="delivery-agent">
+                    <div style="font-weight: bold; margin-bottom: 5px; color: #666;">🚴 Delivery Agent:</div>
+                    <div class="agent-info">
+                        <div class="agent-name" th:text="${order.deliveryAgent}">Agent Name</div>
+                    </div>
+                </div>
+                <div th:unless="${order.deliveryAgent}">
+                    <p style="color: #999; margin-top: 10px;">Delivery agent will be assigned soon</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div th:if="${order.status == 'pending'}" style="margin-top: 15px;">
+                <form th:action="@{/orders/{id}/cancel(id=${order.id})}" method="post" style="display: inline;">
+                    <button type="submit" class="btn" style="background-color: #ff6b6b; color: white;">
+                        Cancel Order
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- No Orders -->
+    <div th:if="${#lists.isEmpty(orders)}" style="text-align: center; padding: 50px 0; color: #999;">
+        <p>No orders yet</p>
+        <a th:href="@{/home}" class="btn btn-primary" style="margin-top: 20px;">Start Ordering</a>
+    </div>
+</div>
+</body>
+</html>
