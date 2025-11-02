@@ -1,32 +1,35 @@
-# 🍽️ Food Delivery WebApp
+# Food Delivery System - Traditional Spring MVC
 
-A full-stack web application for online food ordering and delivery management built using Spring Boot and vanilla JavaScript.
+A full-stack web application for online food ordering and delivery management built using Spring Boot with Traditional MVC architecture and Thymeleaf template engine.
 
 ---
 
 ## 📋 Table of Contents
 
-1. [Project Description](#project-description)
-2. [Tech Stack](#tech-stack)
-3. [Features](#features)
-4. [Project Structure](#project-structure)
-5. [MVC Architecture](#mvc-architecture)
-6. [Database ERD](#database-erd)
-7. [How to Run](#how-to-run)
+- [Project Description](#project-description)
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [MVC Architecture](#mvc-architecture)
+- [Database ERD](#database-erd)
+- [How to Run](#how-to-run)
+- [URL Mappings](#url-mappings)
+- [Troubleshooting](#troubleshooting)
 
 ---
 
 ## 📝 Project Description
 
-Food Delivery WebApp is a comprehensive platform that connects customers, restaurants, and delivery partners. Users can browse restaurants, add items to their cart, place orders with multiple payment options, and track their deliveries in real-time. The application provides restaurant owners with order management capabilities and admins with system oversight.
+Food Delivery System is a comprehensive server-side rendered web application that connects customers with restaurants for seamless food ordering. Users can browse restaurants, manage their cart, place orders with multiple payment options, and track deliveries. The application follows Traditional Spring MVC pattern with server-side rendering using Thymeleaf templates.
 
 ### Key Objectives
 
-- Enable seamless food ordering experience for customers
-- Provide restaurants with efficient order management
-- Automate delivery agent assignment and tracking
+- Provide server-side rendered pages for better SEO and performance
+- Enable seamless food ordering experience with session-based cart management
+- Implement secure authentication with Spring Security
+- Automate delivery agent assignment
 - Ensure secure payment processing
-- Maintain user data with strong security practices
+- Maintain strong data security with BCrypt password encryption
 
 ---
 
@@ -34,261 +37,181 @@ Food Delivery WebApp is a comprehensive platform that connects customers, restau
 
 ### Backend
 - **Framework:** Spring Boot 3.1.5
-- **Language:** Java 17+
+- **Language:** Java 17
+- **Template Engine:** Thymeleaf
 - **Database:** MySQL 8.0
 - **ORM:** Hibernate/JPA
-- **Security:** Spring Security with BCrypt password hashing
+- **Security:** Spring Security with BCrypt
 - **Build Tool:** Maven 3.x
-- **API:** RESTful API with JSON responses
 
 ### Frontend
-- **Markup:** HTML5 (semantic)
-- **Styling:** CSS3 (Flexbox/Grid)
-- **Scripting:** Vanilla JavaScript (no frameworks)
+- **Markup:** HTML5 with Thymeleaf
+- **Styling:** CSS3
+- **Scripting:** Vanilla JavaScript
 - **HTTP Client:** Fetch API
-- **Serving:** npm serve
-
-### Development Tools
-- Git for version control
-- Maven for dependency management
-- MySQL Workbench or CLI for database management
 
 ---
 
 ## ✨ Features
 
 ### Customer Features
-- User registration and secure login with email verification
-- Browse restaurants by cuisine, ratings, and location
-- View detailed menu with food items, images, and prices
-- Add/remove items to/from shopping cart
-- Multiple payment options: Credit Card, UPI, Cash on Delivery
-- Real-time order tracking from kitchen to doorstep
-- View complete order history with past orders
-- Update profile information and manage delivery addresses
-- Contact delivery agent information on active orders
+- User registration and secure login
+- Browse restaurants by cuisine and ratings
+- View detailed menu with prices
+- Real-time cart management
+- Multiple payment options (Card, UPI, COD)
+- Order tracking with delivery time
+- Complete order history
+- Profile management
 
 ### Restaurant Features
-- Restaurant profile creation and management
-- Add, edit, and delete menu items with images
-- Receive real-time order notifications
-- Manage order status and kitchen operations
-- View ratings and customer reviews
+- Restaurant profile with cuisine and ratings
+- Menu management with items and pricing
 
-### Delivery Partner Features
-- Automatic order assignment based on location
-- View assigned delivery orders
-- Update delivery status in real-time
-
-### Admin Features
-- Manage all restaurants in the system
-- Monitor all orders across restaurants
-- Track delivery agents and their performance
-- View system analytics and reports
+### System Features
+- Session-based authentication
+- Server-side form validation
+- Responsive design
+- Cart persistence during session
 
 ---
 
 ## 📁 Project Structure
-
 ```
-Food-delivery-WebApp/
-├── src/
-│   ├── main/
-│   │   ├── java/com/fooddelivery/
-│   │   │   ├── controller/
-│   │   │   │   ├── UserController.java
-│   │   │   │   ├── RestaurantController.java
-│   │   │   │   ├── MenuItemController.java
-│   │   │   │   ├── OrderController.java
-│   │   │   │   └── PaymentController.java
-│   │   │   ├── service/
-│   │   │   │   ├── UserService.java
-│   │   │   │   ├── RestaurantService.java
-│   │   │   │   ├── MenuItemService.java
-│   │   │   │   ├── OrderService.java
-│   │   │   │   └── PaymentService.java
-│   │   │   ├── repository/
-│   │   │   │   ├── UserRepository.java
-│   │   │   │   ├── RestaurantRepository.java
-│   │   │   │   ├── MenuItemRepository.java
-│   │   │   │   ├── OrderRepository.java
-│   │   │   │   └── PaymentRepository.java
-│   │   │   ├── model/
-│   │   │   │   ├── User.java
-│   │   │   │   ├── Restaurant.java
-│   │   │   │   ├── MenuItem.java
-│   │   │   │   ├── Order.java
-│   │   │   │   ├── OrderItem.java
-│   │   │   │   └── Payment.java
-│   │   │   ├── config/
-│   │   │   │   └── SecurityConfig.java
-│   │   │   ├── exception/
-│   │   │   │   └── GlobalExceptionHandler.java
-│   │   │   └── FoodDeliveryApplication.java
-│   │   └── resources/
-│   │       ├── application.properties
-│   │       └── static/
-│   │           └── index.html   ← 🧠 Main frontend file served by Spring Boot
-│   └── test/
-│       └── java/ (unit tests)
-│
+Food-delivery-MVC/
+├── pom.xml
+├── README.md
 ├── database/
-│   ├── schema.sql (database tables)
-│   └── sample-data.sql (initial data)
-│
-├── frontend/
-│   ├── index.html
-│   ├── css/
-│   │   ├── style.css
-│   │   └── responsive.css
-│   ├── js/
-│   │   ├── app.js
-│   │   ├── api.js
-│   │   ├── auth.js
-│   │   └── cart.js
-│   └── assets/
-│       └── images/
-│
-├── pom.xml (Maven dependencies)
-└── README.md
-
+│   ├── schema.sql
+│   └── sample-data.sql
+└── src/
+    ├── main/
+    │   ├── java/com/fooddelivery/
+    │   │   ├── FoodDeliveryApplication.java
+    │   │   ├── config/
+    │   │   │   └── SecurityConfig.java
+    │   │   ├── controller/
+    │   │   │   ├── HomeController.java
+    │   │   │   ├── RestaurantController.java
+    │   │   │   ├── OrderController.java
+    │   │   │   ├── UserController.java
+    │   │   │   └── CartController.java
+    │   │   ├── service/
+    │   │   │   ├── UserService.java
+    │   │   │   ├── RestaurantService.java
+    │   │   │   ├── OrderService.java
+    │   │   │   └── PaymentService.java
+    │   │   ├── repository/
+    │   │   │   ├── UserRepository.java
+    │   │   │   ├── RestaurantRepository.java
+    │   │   │   ├── MenuItemRepository.java
+    │   │   │   ├── OrderRepository.java
+    │   │   │   ├── OrderItemRepository.java
+    │   │   │   ├── PaymentRepository.java
+    │   │   │   └── DeliveryAgentRepository.java
+    │   │   └── model/
+    │   │       ├── User.java
+    │   │       ├── Restaurant.java
+    │   │       ├── MenuItem.java
+    │   │       ├── Order.java
+    │   │       ├── OrderItem.java
+    │   │       ├── Payment.java
+    │   │       └── DeliveryAgent.java
+    │   └── resources/
+    │       ├── application.properties
+    │       ├── templates/
+    │       │   ├── landing.html
+    │       │   ├── login.html
+    │       │   ├── signup.html
+    │       │   ├── home.html
+    │       │   ├── menu.html
+    │       │   ├── checkout.html
+    │       │   ├── orders.html
+    │       │   └── profile.html
+    │       └── static/
+    │           ├── css/
+    │           │   └── style.css
+    │           └── js/
+    │               ├── cart.js
+    │               ├── menu.js
+    │               └── checkout.js
+    └── test/
+        └── java/
 ```
 
 ---
 
 ## 🏗️ MVC Architecture
-
-The application follows the Model-View-Controller (MVC) architectural pattern:
-
 ```
-┌─────────────────────────────────────────────┐
-│         View Layer (Frontend)               │
-│    HTML, CSS, JavaScript (Vanilla)          │
-│    Running on localhost:3000                │
-└──────────────────┬──────────────────────────┘
-                   │ HTTP Requests (Fetch API)
-                   ▼
-┌─────────────────────────────────────────────┐
-│      Controller Layer (REST API)            │
-│    @RestController                          │
-│    Handles HTTP requests & responses        │
-└──────────────────┬──────────────────────────┘
-                   │
-                   ▼
-┌─────────────────────────────────────────────┐
-│      Service Layer (Business Logic)         │
-│    @Service                                 │
-│    Contains core application logic          │
-└──────────────────┬──────────────────────────┘
-                   │
-                   ▼
-┌─────────────────────────────────────────────┐
-│      Repository Layer (Data Access)        │
-│    @Repository / JpaRepository              │
-│    Communicates with database               │
-└──────────────────┬──────────────────────────┘
-                   │
-                   ▼
-┌─────────────────────────────────────────────┐
-│         MySQL Database                      │
-│    Persistent data storage                  │
-└─────────────────────────────────────────────┘
+┌──────────────────────────────────────┐
+│   View Layer (Thymeleaf Templates)  │
+│   - Server-side HTML rendering      │
+└─────────────┬────────────────────────┘
+              │
+              ▼
+┌──────────────────────────────────────┐
+│   Controller Layer                   │
+│   - @Controller                      │
+│   - Handle HTTP requests             │
+└─────────────┬────────────────────────┘
+              │
+              ▼
+┌──────────────────────────────────────┐
+│   Service Layer                      │
+│   - @Service                         │
+│   - Business logic                   │
+└─────────────┬────────────────────────┘
+              │
+              ▼
+┌──────────────────────────────────────┐
+│   Repository Layer                   │
+│   - JpaRepository                    │
+│   - Database operations              │
+└─────────────┬────────────────────────┘
+              │
+              ▼
+┌──────────────────────────────────────┐
+│   MySQL Database                     │
+└──────────────────────────────────────┘
 ```
-
-**Data Flow:**
-1. Frontend sends HTTP request to backend API
-2. Controller receives request and delegates to Service layer
-3. Service implements business logic and delegates to Repository
-4. Repository performs database operations
-5. Response flows back through the layers to the frontend
-6. Frontend updates UI based on the response
 
 ---
 
 ## 🗄️ Database ERD
 
-```
-┌─────────────────────────────────────────────────────┐
-│                    USERS                            │
-├─────────────────────────────────────────────────────┤
-│ • id (PK)              • phone                      │
-│ • name                 • address                    │
-│ • email (UNIQUE)       • city                       │
-│ • password             • postal_code               │
-│ • created_at           • updated_at                │
-└──────────────┬──────────────────────────────────────┘
-               │ 1:N
-               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      ORDERS                                     │
-├─────────────────────────────────────────────────────────────────┤
-│ • id (PK)                  • payment_method                     │
-│ • user_id (FK) ──────┐     • estimated_delivery                │
-│ • restaurant_id (FK) │     • delivery_agent                    │
-│ • total_amount       │     • created_at                        │
-│ • tax                │     • updated_at                        │
-│ • delivery_fee       ├──→ (Links to USERS 1:N)                 │
-│ • status             ├──→ (Links to RESTAURANTS 1:N)           │
-│ • delivery_address   │
-└──────┬────────────────────────────┬────────────────────────────┘
-       │ 1:N                        │ 1:1
-       ▼                            ▼
-┌──────────────────────┐    ┌──────────────────────────┐
-│   ORDER_ITEMS        │    │     PAYMENTS             │
-├──────────────────────┤    ├──────────────────────────┤
-│ • id (PK)            │    │ • id (PK)                │
-│ • order_id (FK)      │    │ • order_id (FK) UNIQUE  │
-│ • menu_item_id (FK)  │    │ • amount                 │
-│ • quantity           │    │ • payment_method        │
-│ • price              │    │ • payment_status        │
-└────────┬─────────────┘    │ • transaction_id        │
-         │ N:1              │ • created_at            │
-         ▼                  └──────────────────────────┘
-┌──────────────────────────┐
-│    MENU_ITEMS            │
-├──────────────────────────┤
-│ • id (PK)                │
-│ • restaurant_id (FK)     │
-│ • name                   │
-│ • description            │
-│ • price                  │
-│ • created_at             │
-└────────┬─────────────────┘
-         │ N:1
-         ▼
-┌──────────────────────────┐
-│   RESTAURANTS            │
-├──────────────────────────┤
-│ • id (PK)                │
-│ • name                   │
-│ • cuisine                │
-│ • rating                 │
-│ • image_url              │
-│ • created_at             │
-└──────────────────────────┘
+### Tables
 
-┌──────────────────────────┐
-│  DELIVERY_AGENTS         │
-├──────────────────────────┤
-│ • id (PK)                │
-│ • name                   │
-│ • phone                  │
-│ • rating                 │
-│ • created_at             │
-└──────────────────────────┘
-```
+**users**
+- id (PK), name, email, password, phone, address, city, postal_code, created_at, updated_at
 
-**Key Relationships:**
+**restaurants**
+- id (PK), name, cuisine, rating, image_url, created_at
 
-| Relationship | Description |
-|:-----------|:-----------|
-| Users → Orders | 1:N - One user can place multiple orders |
-| Restaurants → Orders | 1:N - One restaurant fulfills multiple orders |
-| Restaurants → Menu Items | 1:N - One restaurant has multiple menu items |
-| Orders → Order Items | 1:N - One order contains multiple items |
-| Menu Items → Order Items | 1:N - Menu items appear in multiple orders |
-| Orders → Payments | 1:1 - Each order has exactly one payment record |
-| Delivery Agents (standalone) | Independent table for delivery partner management |
+**menu_items**
+- id (PK), restaurant_id (FK), name, description, price, created_at
+
+**orders**
+- id (PK), user_id (FK), restaurant_id (FK), total_amount, tax, delivery_fee, status, delivery_address, payment_method, delivery_agent, estimated_delivery_time, created_at, updated_at
+
+**order_items**
+- id (PK), order_id (FK), menu_item_id (FK), name, quantity, price, created_at
+
+**payments**
+- id (PK), order_id (FK), amount, payment_method, payment_status, transaction_id, created_at
+
+**delivery_agents**
+- id (PK), name, phone, rating, created_at
+
+### Relationships
+
+| Relationship | Type |
+|-------------|------|
+| Users → Orders | 1:N |
+| Restaurants → Orders | 1:N |
+| Restaurants → Menu Items | 1:N |
+| Orders → Order Items | 1:N |
+| Menu Items → Order Items | 1:N |
+| Orders → Payments | 1:1 |
 
 ---
 
@@ -296,163 +219,126 @@ The application follows the Model-View-Controller (MVC) architectural pattern:
 
 ### Prerequisites
 
-Before running the application, ensure you have:
-- **Java JDK 17+** installed
-- **Maven 3.6+** installed
-- **MySQL 8.0+** installed and running
-- **Node.js & npm** installed
-- **Git** (optional, for cloning)
+- Java JDK 17+
+- Maven 3.6+
+- MySQL 8.0+
+- Git (optional)
 
-### Step-by-Step Setup
+### Setup Steps
 
-#### 1. **Clone the Repository**
-
+#### 1. Clone Repository
 ```bash
-git clone https://github.com/AnushreeRavichandran26/Food-delivery-WebApp.git
-cd Food-delivery-WebApp
+git clone https://github.com/yourusername/Food-delivery-MVC.git
+cd Food-delivery-MVC
 ```
 
-#### 2. **Setup MySQL Database**
-
-Open MySQL command line or MySQL Workbench and run:
-
+#### 2. Setup Database
 ```bash
 mysql -u root -p
 ```
-
-Enter your MySQL password when prompted. Then execute:
-
 ```sql
 CREATE DATABASE food_delivery;
 USE food_delivery;
 ```
 
-#### 3. **Load Database Schema**
-
-Run the schema.sql file from the database folder:
-
+#### 3. Load Schema
 ```bash
 mysql -u root -p food_delivery < database/schema.sql
 ```
 
-(Optional) Load sample data if you want initial data:
+#### 4. Configure Database
 
-```bash
-mysql -u root -p food_delivery < database/sample-data.sql
-```
-
-#### 4. **Configure Database Connection**
-
-Edit `src/main/resources/application.properties` and update:
-
+Edit `src/main/resources/application.properties`:
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/food_delivery
 spring.datasource.username=root
-spring.datasource.password=your_mysql_password
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.password=your_password
 
-# Hibernate Configuration
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=false
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+spring.jpa.show-sql=true
 
-# Server Configuration
+spring.thymeleaf.cache=false
+
 server.port=8080
-server.servlet.context-path=/api
 ```
 
-Replace `your_mysql_password` with your actual MySQL password.
-
-#### 5. **Run Backend Server**
-
-In the project root directory, execute:
-
+#### 5. Build and Run
 ```bash
-mvn clean spring-boot:run
+mvn clean install
+mvn spring-boot:run
 ```
 
-The backend will start on `http://localhost:8080/api`
+#### 6. Access Application
 
-**Expected Output:**
-```
-Started FoodDeliveryApplication in X.XXX seconds
-```
-
-#### 6. **Run Frontend Server** (in a new terminal)
-
-Navigate to the frontend directory:
-
-```bash
-cd index.html
-npm install
-npx serve
-```
-
-The frontend will start on `http://localhost:3000`
-
-#### 7. **Access the Application**
-
-Open your browser and go to:
-
-```
-http://localhost:3000
-```
-
-You should see the Food Delivery WebApp homepage.
-
-### All Commands Summary
-
-**Terminal 1 (Backend):**
-```bash
-mvn clean spring-boot:run
-```
-
-**Terminal 2 (Frontend):**
-```bash
-cd frontend
-npx serve
-```
-
-**Browser:**
-```
-http://localhost:3000
-```
+Open browser: `http://localhost:8080`
 
 ---
 
-## 🔗 API Base URL
+## 🔗 URL Mappings
 
-```
-http://localhost:8080/api
-```
+### Public Routes
 
-## 📚 Common Endpoints
+| Method | URL | Description |
+|--------|-----|-------------|
+| GET | `/` | Landing page |
+| GET | `/login` | Login page |
+| POST | `/perform_login` | Process login |
+| GET | `/signup` | Signup page |
+| POST | `/signup` | Register user |
 
-- `POST /api/users/register` - Register new user
-- `POST /api/users/login` - User login
-- `GET /api/restaurants` - Get all restaurants
-- `GET /api/restaurants/{id}/menu` - Get restaurant menu
-- `POST /api/orders` - Create new order
-- `GET /api/orders/{id}` - Get order details
+### Protected Routes
+
+| Method | URL | Description |
+|--------|-----|-------------|
+| GET | `/home` | Browse restaurants |
+| GET | `/restaurants/{id}/menu` | View menu |
+| GET | `/orders` | Order history |
+| GET | `/orders/checkout` | Checkout page |
+| POST | `/orders/place` | Place order |
+| GET | `/profile` | View profile |
+| POST | `/profile/update` | Update profile |
+| GET | `/logout` | Logout |
+
+### AJAX Endpoints
+
+| Method | URL | Description |
+|--------|-----|-------------|
+| POST | `/cart/add` | Add to cart |
+| POST | `/cart/remove` | Remove from cart |
+| GET | `/cart/get` | Get cart |
+| POST | `/cart/clear` | Clear cart |
 
 ---
 
-## 🆘 Troubleshooting
+## 🐛 Troubleshooting
 
-**Issue:** Backend won't start
-- Check if MySQL is running
-- Verify database credentials in application.properties
-- Ensure port 8080 is not in use
+### Application won't start
 
-**Issue:** Frontend won't load
-- Make sure backend is running first
-- Clear browser cache and refresh
-- Check if port 3000 is available
+**Check:**
+- MySQL is running
+- Database credentials correct
+- Port 8080 available
+- Run `mvn clean install`
 
-**Issue:** Database connection error
-- Verify MySQL username and password
-- Ensure `food_delivery` database exists
-- Run schema.sql again
+### Templates not found
 
----
+**Check:**
+- Files in `src/main/resources/templates/`
+- Thymeleaf configuration
+- File names match controller returns
 
+### Database connection error
+
+**Check:**
+- MySQL credentials
+- Database `food_delivery` exists
+- MySQL running on port 3306
+
+### Login not working
+
+**Check:**
+- SecurityConfig configured
+- User exists in database
+- Password encrypted with BCrypt
+
+Open an issue for questions or support.
